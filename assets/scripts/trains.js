@@ -24,25 +24,41 @@ var frequency = "";
 
 //snapshots
 database.ref().on("value", function (snapshot) {
-    console.log(snapshot.val())
+    console.log(snapshot.val());
+    $("#train-table").append("<tr> <td>" + snapshot.val().train +
+        "</td> <td>" + snapshot.val().destination +
+        "</td> <td>" + snapshot.val().frequency +
+        "</td> <td>" + "placeholder" +
+        "</td> <td>" + "placeholder" +
+        "</td> </tr>"
+    )
 });
 
 $("#submit-button").on("click", function () {
 
-    event.preventDefault()
+    event.preventDefault();
 
 
-    train = $("#train").val();
-    destination = $("#destination").val();
-    firstTrain = $("#first-train");
-    frequency = $("#frequency").val();
+    train = $("#train").val().trim();
+    destination = $("#destination").val().trim();
+    firstTrain = $("#first-train").val().trim();
+    frequency = $("#frequency").val().trim();
 
-    database.ref().set({
+    database.ref().push({
         train: train,
-        destination: destintation,
+        destination: destination,
         firstTrain: firstTrain,
         frequency: frequency
-    })
-
+    });
 });
+database.ref().on("child_added", function (childSnapshot) {
+    $("#train-table").append("<tr> <td>" + childSnapshot.val().train +
+        "</td> <td>" + childSnapshot.val().destination +
+        "</td> <td>" + childSnapshot.val().frequency +
+        "</td> <td>" + "placeholder" +
+        "</td> <td>" + "placeholder" +
+        "</td> </tr>");
 
+}, function (errorObject) {
+    console.log("Errors handled: " + errorObject.code);
+});
